@@ -1,10 +1,10 @@
-import mahotas
+#import mahotas
 import cv2
 import os
 import numpy as np
 import argparse
 directory = r'/home/dheeraj/Downloads/dataset/dataset'
-parent_path = r'/home/dheeraj/Downloads/dataset/dataset_edge'
+parent_path = r'/home/dheeraj/Downloads/dataset/dataset_sobel'
 
 
 def load_yolo():
@@ -109,6 +109,7 @@ def image_detect(img_path):
 if __name__ == '__main__':
     r = []
     t = []
+    img_blur = []
     subdirs = [x[0] for x in os.walk(directory)]
     for subdir in subdirs:
         #print(os.path.basename(subdir))
@@ -135,6 +136,8 @@ if __name__ == '__main__':
                 #img = cv2.imread("/home/dheeraj/Downloads/dataset/dataset/acinonyx-jubatus/acinonyx-jubatus_61_8d963126.jpg")
                 #print(img)
                 # Setting parameter values
+                #img_blur = cv2.GaussianBlur(img, (3, 3), SigmaX=0, SigmaY=0)     #sobel
+
                 t_lower = 100  # Lower Threshold
                 t_upper = 200  # Upper threshold
                 aperture_size = 5
@@ -143,13 +146,17 @@ if __name__ == '__main__':
                 z = image_detect(img)
                 # Applying the Canny Edge filter
                 try:
-                    edge = cv2.Canny(z, t_lower, t_upper, L2gradient= L2Gradient)
+                    #img_blur = cv2.GaussianBlur(z, (3, 3), SigmaX=0, SigmaY=0)
+                    edge = cv2.Sobel(src=z, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
+                    #edge = cv2.Canny(z, t_lower, t_upper, L2gradient= L2Gradient)
 
                 except:
-                    edge = cv2.Canny(image, t_lower, t_upper, L2gradient=L2Gradient)
+                    #img_blur = cv2.GaussianBlur(image, (3, 3), SigmaX=0, SigmaY=0)
+                    edge = cv2.Sobel(src=image, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
+                    #edge = cv2.Canny(image, t_lower, t_upper, L2gradient=L2Gradient)
                 #clone = img
 
-                image_detect("/home/dheeraj/Downloads/dataset/dataset/acinonyx-jubatus/acinonyx-jubatus_3_fe0c6ea1.jpg")
+                #image_detect("/home/dheeraj/Downloads/dataset/dataset/acinonyx-jubatus/acinonyx-jubatus_3_fe0c6ea1.jpg")
                 # cv2.imshow('original', image)
                 # cv2.imshow('edge', edge)
                 cv2.imwrite(os.path.join(current,filename),edge)
