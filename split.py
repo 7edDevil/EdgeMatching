@@ -48,4 +48,4 @@ def parse_args():
 
 if __name__ == "__main__":
   #args = parse_args()
-  main("/home/dheeraj/PycharmProjects/EdgeMatching/dataset", "/home/dheeraj/PycharmProjects/EdgeMatching/dataset_test", 0.7)
+  main(r"D:\University of Surrey\Project\EdgeMatching-master\DatasetJson\ZernikeRawJson", r"D:\University of Surrey\Project\EdgeMatching-master\DatasetJson\ZernikeRawJson_Train", 0.1)

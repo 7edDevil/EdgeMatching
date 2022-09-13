@@ -1,16 +1,21 @@
 #import mahotas
+import pandas as pd
+from pylab import gray, imshow, show
 import cv2
 import os
 import numpy as np
 import argparse
-directory = r'/home/dheeraj/Downloads/dataset/dataset'
-parent_path = r'/home/dheeraj/Downloads/dataset/dataset_sobel'
+from skimage import transform
+import json
 
+directory = r'D:\University of Surrey\Project\EdgeMatching-master\CuratedCanny'
+parent_path = r'D:\University of Surrey\Project\EdgeMatching-master\CuratedSobel_noYOLO'
+source_path = r'D:\University of Surrey\Project\EdgeMatching-master\Sobel_noYOLO'
 
 def load_yolo():
-	net = cv2.dnn.readNet("/home/dheeraj/Public/NeuralFoundry/darknet/cfg/yolov3.weights", "/home/dheeraj/Public/NeuralFoundry/darknet/cfg/yolov3.cfg")
+	net = cv2.dnn.readNet(r"D:\NeuralFoundry\darknet\cfg\yolov3.weights", r"D:\NeuralFoundry\darknet\cfg\yolov3.cfg")
 	classes = []
-	with open("/home/dheeraj/Public/NeuralFoundry/darknet/data/coco.names", "r") as f:
+	with open(r"D:\NeuralFoundry\darknet\data\coco.names", "r") as f:
 		classes = [line.strip() for line in f.readlines()]
 	layers_names = net.getLayerNames()
 	output_layers = [layers_names[i[0]-1] for i in net.getUnconnectedOutLayers()]
@@ -104,6 +109,17 @@ def image_detect(img_path):
     return y
 
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
+
+
+
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -128,10 +144,16 @@ if __name__ == '__main__':
         os.mkdir(current)
         # print(paths)
         #print(path)
+        path1 = os.path.join(source_path,os.path.basename(path))
         for filename in os.listdir(path):
-            if filename.endswith(".jpg"):
-                image = cv2.imread(os.path.join(path,filename))
+            if filename.endswith(".jpg") or filename.endswith(".jpeg"):
+                image = cv2.imread(os.path.join(path1,filename))
+                #image = mahotas.imread(os.path.join(path, filename))
                 img = os.path.join(path,filename)
+                cv2.imwrite(os.path.join(current, filename), image)
+                #print(image)
+                # image = image[:,:,0]
+                radius = 10
                 #print(img)
                 #img = cv2.imread("/home/dheeraj/Downloads/dataset/dataset/acinonyx-jubatus/acinonyx-jubatus_61_8d963126.jpg")
                 #print(img)
@@ -143,23 +165,81 @@ if __name__ == '__main__':
                 aperture_size = 5
                 L2Gradient = True
 
-                z = image_detect(img)
+                #z = image_detect(img)
                 # Applying the Canny Edge filter
-                try:
+                #try:
+                    #image = image[:, :, 0]
+                    #value = mahotas.features.zernike_moments(image, radius)
+                    # if value[0] == 0:
+                    #     continue
+                    # with open(os.path.join(current, filename.split(".")[0] + ".json"), "w") as out_file:
+                    #     #print(value)
+                    #     #value = np.array(value)
+                    #     #print(value)
+                    #     #points_crop = np.array(points_crop)
+                    #     json.dump(value, out_file, cls=NumpyEncoder)
+                    # out_file.close()
+                    #print(value)
+                    #value = np.array(value)
+                    #df = pd.DataFrame(value)
+                    #print(df)
+                    #print(df.shape)
                     #img_blur = cv2.GaussianBlur(z, (3, 3), SigmaX=0, SigmaY=0)
-                    edge = cv2.Sobel(src=z, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
-                    #edge = cv2.Canny(z, t_lower, t_upper, L2gradient= L2Gradient)
+                    #edge = cv2.Sobel(src=z, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
+                    #edge = cv2.Canny(image, t_lower, t_upper, L2gradient= L2Gradient)
+                    # trans_img= transform.rotate(image,angle=50,cval=0)
+                    # trans_imgX= transform.rotate(image,angle=-50,cval=0)
+                    # trans_imgY= transform.rotate(image, angle=100, cval=0)
 
-                except:
+                #except:
+                    # value = mahotas.features.zernike_moments(image, radius)
+                    # if value[0] == 0:
+                    #     continue
+                    # with open(os.path.join(current, filename.split(".")[0] + ".json"), "w") as out_file:
+                    #     #print(value)
+                    #     #value = np.array(value)
+                    #     #print(value)
+                    #     #points_crop = np.array(points_crop)
+                    #     json.dump(value, out_file, cls=NumpyEncoder)
+                    # out_file.close()
+                    #print(value)
+                    #pass
+                    # image = image[:, :, 0]
+                    # value = mahotas.features.zernike_moments(image, radius)
+                    # df = pd.DataFrame(value)
+                    # print(df.shape)
                     #img_blur = cv2.GaussianBlur(image, (3, 3), SigmaX=0, SigmaY=0)
-                    edge = cv2.Sobel(src=image, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
+                    #edge = cv2.Sobel(src=image, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
                     #edge = cv2.Canny(image, t_lower, t_upper, L2gradient=L2Gradient)
+                    # trans_img = transform.rotate(image, angle=50, cval=0)
+                    # trans_imgX = transform.rotate(image, angle=-50, cval=0)
+                    # trans_imgY = transform.rotate(image, angle=100, cval=0)
                 #clone = img
 
                 #image_detect("/home/dheeraj/Downloads/dataset/dataset/acinonyx-jubatus/acinonyx-jubatus_3_fe0c6ea1.jpg")
                 # cv2.imshow('original', image)
                 # cv2.imshow('edge', edge)
-                cv2.imwrite(os.path.join(current,filename),edge)
+                try:
+                    filenameX = "x"+ filename
+                    filenameY = "y" + filename
+                    filenameZ = "z" + filename
+                    filenameA = filename + ".json"
+                    # if value[0] == 0:
+                    #     continue
+                    # with open(os.path.join(current, filename.split(".")[0] + ".json"), "w") as out_file:
+                    #     #print(value)
+                    #     #value = np.array(value)
+                    #     #print(value)
+                    #     #points_crop = np.array(points_crop)
+                    #     json.dump(value, out_file, cls=NumpyEncoder)
+                    # out_file.close()
+                    #df.to_json(os.path.join(current,filenameA))
+                except:
+                    pass
+                # cv2.imwrite(os.path.join(current,filename),image)
+                # cv2.imwrite(os.path.join(current,filenameX),trans_img)
+                # cv2.imwrite(os.path.join(current,filenameY),trans_imgX)
+                # cv2.imwrite(os.path.join(current,filenameZ),trans_imgY)
                 # print(os.path.join(current,filename))
                 # cv2.waitKey(1)
                 # cv2.destroyAllWindows()
